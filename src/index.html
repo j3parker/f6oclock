@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<meta charset="UTF-8"/>
+<title>f6oclock</title>
+
+<style>
+    body {
+        margin: 0;
+        width: 100%;
+    }
+
+    ol {
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        list-style-type: none;
+        padding-bottom: 0.2em;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    .trending {
+        background-color: #ffd8b2;
+    }
+
+    .hot {
+        background-color: #fffb7f;
+    }
+
+    .hottest {
+        background-color: #ffa64c;
+    }
+
+    .ref {
+        font-style: italic;
+        float: right;
+        color: #555;
+    }
+</style>
+
+<ol id="posts"></ol>
+
+<script>
+    update();
+
+    async function update() {
+        // fetch
+        const resp = await fetch('https://www.reddit.com/r/politics/rising.json');
+        const data = await resp.json();
+
+        const postsElem = document.getElementById('posts');
+        const postElems = document.createDocumentFragment();
+
+        const postsData = data.data.children;
+        postsData.sort((a,b) => b.data.ups - a.data.ups);
+
+        // render
+        for(let postData of postsData) {
+            postData = postData.data;
+
+            const li = document.createElement('li');
+            li.className = color(postData.ups);
+
+            const a = document.createElement('a');
+            a.href = postData.url;
+            a.textContent = postData.title;
+
+            const ref = document.createElement('span');
+            ref.className = 'ref';
+            ref.textContent = getRef(postData.url);
+
+            li.appendChild(a);
+            li.appendChild(ref);
+            postElems.appendChild(li);
+        }
+
+        // replace
+        deleteChildren(postsElem);
+        postsElem.appendChild(postElems);
+    }
+
+    function getRef(url) {
+        return new URL(url).host;
+    }
+
+    function deleteChildren(elem) {
+        while(elem.firstChild) {
+            elem.removeChild(elem.firstChild);
+        }
+    }
+
+    function color(ups) {
+        if(ups < 100) {
+            return null;
+        } else if(ups >= 100 && ups < 250) {
+            return 'trending';
+        } else if(ups >= 250 && ups < 500) {
+            return 'hot';
+        } else {
+            return 'hottest';
+        }
+    }
+
+    setInterval(update, 2000);
+</script>
