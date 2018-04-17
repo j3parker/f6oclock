@@ -104,7 +104,13 @@
     }
 
     function getRef(url) {
-        return new URL(url).host;
+        const host = new URL(url).host;
+        
+        if(host.startsWith('www.')) {
+            return host.substr(4);
+        } else {
+            return host;
+        }
     }
 
     function deleteChildren(elem) {
