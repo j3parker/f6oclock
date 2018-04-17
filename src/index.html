@@ -32,7 +32,19 @@
         background-color: #ffa64c;
     }
 
-    .ref {
+    a.storyLink {
+        font-family: sans-serif;
+        text-decoration: none;
+        color: black;
+    }
+
+    a.commentsLink {
+        margin-left: 0.5em;
+        text-decoration: none;
+        color: #555;
+    }
+
+    span.ref {
         font-style: italic;
         float: right;
         color: #555;
@@ -62,19 +74,27 @@
             const li = document.createElement('li');
             const intensity = color(postData.ups);
 
-            const a = document.createElement('a');
-            a.href = postData.url;
-            a.textContent = postData.title;
             if(intensity) {
                 li.className = intensity;
             }
 
+            const storyLink = document.createElement('a');
+            storyLink.className = 'storyLink';
+            storyLink.href = postData.url;
+            storyLink.textContent = postData.title;
+            li.appendChild(storyLink);
+
+            const commentsLink = document.createElement('a');
+            commentsLink.className = 'commentsLink';
+            commentsLink.href = 'https://reddit.com' + postData.permalink;
+            commentsLink.textContent = 'comments';
+            li.appendChild(commentsLink);
+
             const ref = document.createElement('span');
             ref.className = 'ref';
             ref.textContent = getRef(postData.url);
-
-            li.appendChild(a);
             li.appendChild(ref);
+
             postElems.appendChild(li);
         }
 
