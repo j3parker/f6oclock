@@ -10,6 +10,7 @@ import Time exposing (Time, second)
 
 type LoopState
     = Ready Int -- countdown until Reddit refresh
+    | Choked -- because mouse moved
     | Waiting -- indicates we are waiting on a response from Reddit
 
 
@@ -54,6 +55,10 @@ modelSubscriptions model =
             , Mouse.moves MouseMove
             ]
 
+        ( Visible, Choked ) ->
+            -- don't listen to mouse events when choked
+            [ Time.every second Tick ]
+
         _ ->
             []
 
@@ -71,12 +76,15 @@ update msg model =
                     -- count down
                     ( { model | loop = Ready (t - 1) }, Cmd.none )
 
+                Choked ->
+                    ( { model | loop = reset }, Cmd.none )
+
                 Waiting ->
                     ( model, Cmd.none )
 
         MouseMove _ ->
             -- prevent links moving underneath the cursor by not refreshing
-            ( { model | loop = reset }, Cmd.none )
+            ( { model | loop = Choked }, Cmd.none )
 
         RisingPosts (Ok data) ->
             ( { model | loop = reset, data = data }, Cmd.none )
