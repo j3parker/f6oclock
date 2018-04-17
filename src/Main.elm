@@ -67,9 +67,9 @@ update msg model =
                     -- refresh
                     ( { model | loop = Waiting }, getRisingPosts )
 
-                Ready _ ->
+                Ready t ->
                     -- count down
-                    ( { model | loop = tick model.loop }, Cmd.none )
+                    ( { model | loop = Ready (t - 1) }, Cmd.none )
 
                 Waiting ->
                     ( model, Cmd.none )
@@ -92,16 +92,6 @@ update msg model =
 
         VisibilityChange Hidden ->
             ( { model | visibility = Hidden }, Cmd.none )
-
-
-tick : LoopState -> LoopState
-tick state =
-    case state of
-        Ready t ->
-            Ready (t - 1)
-
-        Waiting ->
-            Waiting
 
 
 reset : LoopState
