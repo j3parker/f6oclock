@@ -14,9 +14,9 @@ type LoopState
 
 
 type alias Model =
-    { loop : LoopState
-    , data : String
-    , visibility : Visibility
+    { visibility : Visibility
+    , loop : LoopState
+    , data : String -- placeholder (should be posts)
     }
 
 
@@ -38,7 +38,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Ready 1) "" Visible, Cmd.none )
+    ( Model Visible (Ready 1) "", Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -113,6 +113,7 @@ getRisingPosts =
 
 decodeRisingPosts : Decoder String
 decodeRisingPosts =
+    -- TODO
     field "kind" string
 
 
