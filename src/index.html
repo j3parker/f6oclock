@@ -17,23 +17,18 @@
 
     li {
         list-style-type: none;
-        padding-bottom: 0.2em;
+        padding-bottom: 0.4em;
     }
 
-    a {
-        text-decoration: none;
-        color: black;
-    }
-
-    .trending {
+    .i0 {
         background-color: #ffd8b2;
     }
 
-    .hot {
+    .i1 {
         background-color: #fffb7f;
     }
 
-    .hottest {
+    .i2 {
         background-color: #ffa64c;
     }
 
@@ -99,11 +94,11 @@
         if(ups < 100) {
             return null;
         } else if(ups >= 100 && ups < 250) {
-            return 'trending';
+            return 'i0';
         } else if(ups >= 250 && ups < 500) {
-            return 'hot';
+            return 'i1';
         } else {
-            return 'hottest';
+            return 'i2';
         }
     }
 
