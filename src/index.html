@@ -60,11 +60,14 @@
             postData = postData.data;
 
             const li = document.createElement('li');
-            li.className = color(postData.ups);
+            const intensity = color(postData.ups);
 
             const a = document.createElement('a');
             a.href = postData.url;
             a.textContent = postData.title;
+            if(intensity) {
+                li.className = intensity;
+            }
 
             const ref = document.createElement('span');
             ref.className = 'ref';
