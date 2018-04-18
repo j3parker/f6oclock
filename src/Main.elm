@@ -1,7 +1,8 @@
 module Main exposing (..)
 
 import Html exposing (Html, text)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (class, href)
+import Html.Keyed
 import Http
 import Mouse
 import PageVisibility exposing (..)
@@ -88,8 +89,11 @@ update msg model =
             ( { model | loop = Choked }, Cmd.none )
 
         RisingPosts (Ok posts) ->
-            -- TODO: probably sort the posts or something
-            ( { model | loop = reset, posts = posts }, Cmd.none )
+            let
+                sortedPosts =
+                    List.sortBy .upvotes posts |> List.reverse
+            in
+            ( { model | loop = reset, posts = sortedPosts }, Cmd.none )
 
         RisingPosts (Err _) ->
             -- On error, set a longer countdown to "cool down"
@@ -106,7 +110,7 @@ update msg model =
 
 reset : LoopState
 reset =
-    Ready 3
+    Ready 4
 
 
 getRisingPosts : Cmd Msg
@@ -123,13 +127,44 @@ getRisingPosts =
 
 view : Model -> Html Msg
 view model =
-    List.map renderPost model.posts |> Html.ol []
+    List.concatMap renderKeyedPost model.posts |> Html.Keyed.node "div" [ class "listing" ]
 
 
-renderPost : Post -> Html Msg
+renderKeyedPost : Post -> List ( String, Html Msg )
+renderKeyedPost post =
+    let
+        keys =
+            getPostElemKeys post
+
+        elems =
+            renderPost post
+    in
+    List.map2 (,) keys elems
+
+
+getPostElemKeys : Post -> List String
+getPostElemKeys post =
+    List.map
+        (\n -> post.id ++ "-" ++ toString n)
+        (List.range 1 3)
+
+
+renderPost : Post -> List (Html Msg)
 renderPost post =
-    Html.li []
-        [ Html.a [ href post.url ] [ text post.title ]
-        , Html.a [ href post.permalink ] [ text "comments" ]
-        , Html.span [] [ text post.domain ]
-        ]
+    let
+        color =
+            intensity post.upvotes |> class
+    in
+    [ Html.span [ class "ref", color ] [ text post.domain ]
+    , Html.a [ href post.url, class "storyLink", color ] [ text post.title ]
+    , Html.a [ href post.permalink, class "commentsLink", color ] [ text "comments" ]
+    ]
+
+
+intensity : Int -> String
+intensity v =
+    let
+        normV =
+            (toFloat v - 100) / 600 |> max 0 |> min 1
+    in
+    round (normV * 13) |> toString |> (++) "i"
