@@ -1,0 +1,3 @@
+language: elm # will be available once this merges: https://github.com/travis-ci/travis-build/pull/934
+script:
+  - elm make src/Main.elm
