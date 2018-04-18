@@ -1,5 +1,7 @@
 # f6oclock
 
+[![Build Status](https://travis-ci.org/j3parker/f6oclock.svg?branch=master)](https://travis-ci.org/j3parker/f6oclock)
+
 [Visit](http://www.f6oclock.com)
 
 It's like f5oclock.com but it doesn't suck.
