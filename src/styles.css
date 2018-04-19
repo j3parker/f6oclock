@@ -1,12 +1,12 @@
 body {
   margin: 0;
   width: 100%;
-  font-size: 150%;
+  font-size: 125%;
 }
 
 div.listing {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 750px) 1fr;
+  grid-template-columns: 1fr minmax(0, 700px) 1fr;
 }
 
 div.listing > * {
