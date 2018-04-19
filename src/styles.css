@@ -38,6 +38,15 @@ a.commentsLink {
   padding-left: 0.5em;
 }
 
+a.srcLink {
+  text-align: center;
+  display: block;
+  padding-top: 2em;
+  font-family: monospace;
+  color: black;
+  text-decoration: none;
+}
+
 .ix  { transition: background-color 4s ease; }
 .i0  { background-color: #ffffff; }
 .i1  { background-color: #fff2ef; }
