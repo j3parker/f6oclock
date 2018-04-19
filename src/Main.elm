@@ -127,10 +127,14 @@ getRisingPosts =
 
 view : Model -> Html Msg
 view model =
-    Html.div []
-        [ List.concatMap renderKeyedPost model.posts |> Html.Keyed.node "div" [ class "listing" ]
-        , Html.a [ href "https://github.com/j3parker/f6oclock", class "srcLink" ] [ text "[src]" ]
-        ]
+    let
+        listing =
+            List.concatMap renderKeyedPost model.posts |> Html.Keyed.node "div" [ class "listing" ]
+
+        srcLink =
+            Html.a [ href "https://github.com/j3parker/f6oclock", class "srcLink" ] [ text "[src]" ]
+    in
+    Html.div [] [ listing, srcLink ]
 
 
 renderKeyedPost : Post -> List ( String, Html Msg )
