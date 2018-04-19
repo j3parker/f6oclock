@@ -1,12 +1,11 @@
 body {
   margin: 0;
   width: 100%;
-  font-size: 125%;
 }
 
 div.listing {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 700px) 1fr;
+  grid-template-columns: 1fr minmax(0, 750px) 1fr;
 }
 
 div.listing > * {
@@ -25,6 +24,7 @@ a.storyLink {
   font-family: sans-serif;
   text-decoration: none;
   color: black;
+  font-size: 125%;
 
   /* truncate large titles */
   overflow: hidden;
