@@ -154,10 +154,15 @@ renderPost post =
     let
         color =
             intensity post.upvotes |> class
+
+        anim =
+            -- TODO: it'd be cool to make sure the anim time matched our refresh
+            -- rate (dynamically gen the style?)
+            class "ix"
     in
-    [ Html.span [ class "ref", color ] [ text post.domain ]
-    , Html.a [ href post.url, class "storyLink", color ] [ text post.title ]
-    , Html.a [ href post.permalink, class "commentsLink", color ] [ text "comments" ]
+    [ Html.span [ class "ref", color, anim ] [ text post.domain ]
+    , Html.a [ href post.url, class "storyLink", color, anim ] [ text post.title ]
+    , Html.a [ href post.permalink, class "commentsLink", color, anim ] [ text "comments" ]
     ]
 
 

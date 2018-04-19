@@ -38,6 +38,7 @@ a.commentsLink {
   padding-left: 0.5em;
 }
 
+.ix  { transition: background-color 4s ease; }
 .i0  { background-color: #ffffff; }
 .i1  { background-color: #fff2ef; }
 .i2  { background-color: #ffe5df; }
