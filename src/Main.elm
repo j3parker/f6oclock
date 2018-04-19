@@ -1,10 +1,11 @@
 module Main exposing (..)
 
-import Html exposing (Html, span, text)
+import Html exposing (Html, text)
+import Html.Attributes exposing (href)
 import Http
-import Json.Decode exposing (..)
 import Mouse
 import PageVisibility exposing (..)
+import Reddit exposing (Post, decodeListing)
 import Time exposing (Time, second)
 
 
@@ -17,14 +18,14 @@ type LoopState
 type alias Model =
     { visibility : Visibility
     , loop : LoopState
-    , data : String -- placeholder (should be posts)
+    , posts : List Post
     }
 
 
 type Msg
     = Tick Time
     | MouseMove Mouse.Position
-    | RisingPosts (Result Http.Error String)
+    | RisingPosts (Result Http.Error (List Post))
     | VisibilityChange Visibility
 
 
@@ -39,7 +40,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model Visible (Ready 1) "", Cmd.none )
+    ( Model Visible (Ready 1) [], Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -86,8 +87,9 @@ update msg model =
             -- prevent links moving underneath the cursor by not refreshing
             ( { model | loop = Choked }, Cmd.none )
 
-        RisingPosts (Ok data) ->
-            ( { model | loop = reset, data = data }, Cmd.none )
+        RisingPosts (Ok posts) ->
+            -- TODO: probably sort the posts or something
+            ( { model | loop = reset, posts = posts }, Cmd.none )
 
         RisingPosts (Err _) ->
             -- On error, set a longer countdown to "cool down"
@@ -114,17 +116,20 @@ getRisingPosts =
             "https://www.reddit.com/r/politics/rising.json"
 
         req =
-            Http.get url decodeRisingPosts
+            Http.get url decodeListing
     in
     Http.send RisingPosts req
 
 
-decodeRisingPosts : Decoder String
-decodeRisingPosts =
-    -- TODO
-    field "kind" string
-
-
 view : Model -> Html Msg
 view model =
-    span [] [ text (model.data ++ " " ++ toString model.loop) ]
+    List.map renderPost model.posts |> Html.ol []
+
+
+renderPost : Post -> Html Msg
+renderPost post =
+    Html.li []
+        [ Html.a [ href post.url ] [ text post.title ]
+        , Html.a [ href post.permalink ] [ text "comments" ]
+        , Html.span [] [ text post.domain ]
+        ]
