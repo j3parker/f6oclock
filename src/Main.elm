@@ -177,6 +177,6 @@ intensity : Int -> String
 intensity v =
     let
         normV =
-            (toFloat v - 100) / 600 |> max 0 |> min 1
+            (toFloat v - 20) / 700 |> max 0 |> min 1
     in
     round (normV * 13) |> toString |> (++) "i"
