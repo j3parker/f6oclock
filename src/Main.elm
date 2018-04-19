@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, text)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class, href, title)
 import Html.Keyed
 import Http
 import Mouse
@@ -161,7 +161,7 @@ renderPost post =
             class "ix"
     in
     [ Html.span [ class "ref", color, anim ] [ text post.domain ]
-    , Html.a [ href post.url, class "storyLink", color, anim ] [ text post.title ]
+    , Html.a [ href post.url, class "storyLink", color, anim, title post.title ] [ text post.title ]
     , Html.a [ href post.permalink, class "commentsLink", color, anim ] [ text "comments" ]
     ]
 
