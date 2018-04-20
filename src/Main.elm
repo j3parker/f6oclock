@@ -7,7 +7,7 @@ import Html.Keyed
 import Http
 import Mouse
 import PageVisibility exposing (..)
-import Reddit exposing (Post, decodeListing)
+import Reddit exposing (Post, fetchPosts)
 import SanitizePost exposing (sanitizePost)
 import Time exposing (Time, second)
 
@@ -28,7 +28,7 @@ type alias Model =
 type Msg
     = Tick Time
     | MouseMove Mouse.Position
-    | RisingPosts (Result Http.Error (List Post))
+    | FetchResult (Result Http.Error (List Post))
     | VisibilityChange Visibility
 
 
@@ -74,7 +74,7 @@ update msg model =
             case model.loop of
                 Ready 1 ->
                     -- refresh
-                    ( { model | loop = Waiting }, getRisingPosts )
+                    ( { model | loop = Waiting }, fetchPosts "politics" "rising" FetchResult )
 
                 Ready t ->
                     -- count down
@@ -90,7 +90,7 @@ update msg model =
             -- prevent links moving underneath the cursor by not refreshing
             ( { model | loop = Choked }, Cmd.none )
 
-        RisingPosts (Ok posts) ->
+        FetchResult (Ok posts) ->
             let
                 sanitizedPosts =
                     List.map sanitizePost posts
@@ -100,7 +100,7 @@ update msg model =
             in
             ( { model | loop = reset, posts = sortedPosts }, Cmd.none )
 
-        RisingPosts (Err _) ->
+        FetchResult (Err _) ->
             -- On error, set a longer countdown to "cool down"
             -- NOTE: visibility changes will clear this
             ( { model | loop = Ready 30 }, Cmd.none )
@@ -116,18 +116,6 @@ update msg model =
 reset : LoopState
 reset =
     Ready 4
-
-
-getRisingPosts : Cmd Msg
-getRisingPosts =
-    let
-        url =
-            "https://www.reddit.com/r/politics/rising.json"
-
-        req =
-            Http.get url decodeListing
-    in
-    Http.send RisingPosts req
 
 
 view : Model -> Html Msg

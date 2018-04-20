@@ -1,5 +1,6 @@
-module Reddit exposing (Post, decodeListing)
+module Reddit exposing (Post, fetchPosts)
 
+import Http
 import Json.Decode exposing (..)
 
 
@@ -12,6 +13,18 @@ type alias Post =
     , upvotes : Int
     , createdUtc : Int
     }
+
+
+fetchPosts : String -> String -> (Result Http.Error (List Post) -> a) -> Cmd a
+fetchPosts subreddit feed handler =
+    let
+        url =
+            "https://www.reddit.com/r/" ++ subreddit ++ "/" ++ feed ++ ".json"
+
+        req =
+            Http.get url decodeListing
+    in
+    Http.send handler req
 
 
 decodeListing : Decoder (List Post)
