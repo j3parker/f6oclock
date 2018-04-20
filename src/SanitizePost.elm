@@ -5,16 +5,17 @@ import Reddit exposing (Post)
 
 sanitizePost : Post -> Post
 sanitizePost post =
-    if post.domain |> paywalled then
-        { post | url = depaywall post.url }
-    else
+    if post.domain |> whitelist then
         post
+    else
+        { post | url = depaywall post.url }
 
 
-paywalled : String -> Bool
-paywalled domain =
+whitelist : String -> Bool
+whitelist domain =
     case domain of
-        "washingtonpost.com" ->
+        "self" ->
+	    -- Guessing in the dark about selfposts
             True
 
         _ ->
