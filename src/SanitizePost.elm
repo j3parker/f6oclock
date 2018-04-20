@@ -8,20 +8,16 @@ sanitizePost post =
     if post.domain |> whitelist then
         post
     else
-        { post | url = depaywall post.url }
+        { post | url = outline post.url }
 
+whiteList : List String
+whiteList =
+    [ "self.politics", "reddit.com", "outline.com" ]
 
 whitelist : String -> Bool
 whitelist domain =
-    case domain of
-        "self" ->
-	    -- Guessing in the dark about selfposts
-            True
+    List.member domain whiteList
 
-        _ ->
-            False
-
-
-depaywall : String -> String
-depaywall url =
+outline : String -> String
+outline url =
     "https://outline.com/" ++ url
