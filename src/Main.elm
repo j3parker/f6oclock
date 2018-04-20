@@ -7,6 +7,7 @@ import Http
 import Mouse
 import PageVisibility exposing (..)
 import Reddit exposing (Post, decodeListing)
+import SanitizePost exposing (sanitizePost)
 import Time exposing (Time, second)
 
 
@@ -90,8 +91,11 @@ update msg model =
 
         RisingPosts (Ok posts) ->
             let
+                sanitizedPosts =
+                    List.map sanitizePost posts
+
                 sortedPosts =
-                    List.sortBy .upvotes posts |> List.reverse
+                    List.sortBy .upvotes sanitizedPosts |> List.reverse
             in
             ( { model | loop = reset, posts = sortedPosts }, Cmd.none )
 
