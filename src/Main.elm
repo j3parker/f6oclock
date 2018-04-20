@@ -92,11 +92,8 @@ update msg model =
 
         FetchResult (Ok posts) ->
             let
-                sanitizedPosts =
-                    List.map sanitizePost posts
-
                 sortedPosts =
-                    List.sortBy .upvotes sanitizedPosts |> List.reverse
+                    List.sortBy .upvotes posts |> List.reverse
             in
             ( { model | loop = reset, posts = sortedPosts }, Cmd.none )
 
@@ -161,8 +158,8 @@ renderPost post =
         style_ =
             style [ ( "backgroundColor", toCss color ) ]
     in
-    [ Html.span [ class "ref", anim, style_ ] [ text post.domain ]
-    , Html.a [ class "storyLink", anim, style_, href post.url, title post.title ] [ text post.title ]
+    [ Html.span [ class "ref", anim, style_, href post.url ] [ text post.domain ]
+    , Html.a [ class "storyLink", anim, style_, href sanitizeUrl post.url, title post.title ] [ text post.title ]
     , Html.a [ class "commentsLink", anim, style_, href post.permalink ] [ text "comments" ]
     ]
 
