@@ -47,18 +47,4 @@ a.srcLink {
   text-decoration: none;
 }
 
-.ix  { transition: background-color 4s ease; }
-.i0  { background-color: #ffffff; }
-.i1  { background-color: #fff2ef; }
-.i2  { background-color: #ffe5df; }
-.i3  { background-color: #ffd8cf; }
-.i4  { background-color: #ffccc0; }
-.i5  { background-color: #ffbfb0; }
-.i6  { background-color: #ffb2a1; }
-.i7  { background-color: #ffa492; }
-.i8  { background-color: #ff9784; }
-.i9  { background-color: #ff8975; }
-.i10 { background-color: #ff7b67; }
-.i11 { background-color: #fd6d59; }
-.i12 { background-color: #fa5d4b; }
-.i13 { background-color: #f64c3d; }
+.smoothBg  { transition: background-color 4s ease; }

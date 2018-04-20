@@ -1,7 +1,8 @@
 module Main exposing (..)
 
+import Colour exposing (Lab, Rgb, labLerp, toCss)
 import Html exposing (Html, text)
-import Html.Attributes exposing (class, href, title)
+import Html.Attributes exposing (class, href, style, title)
 import Html.Keyed
 import Http
 import Mouse
@@ -163,24 +164,21 @@ getPostElemKeys post =
 renderPost : Post -> List (Html Msg)
 renderPost post =
     let
-        color =
-            intensity post.upvotes |> class
-
         anim =
-            -- TODO: it'd be cool to make sure the anim time matched our refresh
-            -- rate (dynamically gen the style?)
-            class "ix"
+            class "smoothBg"
+
+        color =
+            intensity post.upvotes
+
+        style_ =
+            style [ ( "backgroundColor", toCss color ) ]
     in
-    [ Html.span [ class "ref", color, anim ] [ text post.domain ]
-    , Html.a [ href post.url, class "storyLink", color, anim, title post.title ] [ text post.title ]
-    , Html.a [ href post.permalink, class "commentsLink", color, anim ] [ text "comments" ]
+    [ Html.span [ class "ref", anim, style_ ] [ text post.domain ]
+    , Html.a [ class "storyLink", anim, style_, href post.url, title post.title ] [ text post.title ]
+    , Html.a [ class "commentsLink", anim, style_, href post.permalink ] [ text "comments" ]
     ]
 
 
-intensity : Int -> String
-intensity v =
-    let
-        normV =
-            (toFloat v - 20) / 700 |> max 0 |> min 1
-    in
-    round (normV * 13) |> toString |> (++) "i"
+intensity : Int -> Rgb
+intensity =
+    labLerp (Lab 100 0 0) (Lab 57 63.5 46) 20 700
