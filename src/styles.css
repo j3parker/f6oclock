@@ -13,8 +13,9 @@ div.listing > * {
   padding-bottom: 0.4em;
 }
 
-span.ref {
+a.ref {
   text-align: right;
+  text-decoration: none;
   font-style: italic;
   color: #777;
   padding-right: 0.5em;
