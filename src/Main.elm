@@ -158,7 +158,7 @@ renderPost post =
         style_ =
             style [ ( "backgroundColor", toCss color ) ]
     in
-    [ Html.span [ class "ref", anim, style_, href post.url ] [ text post.domain ]
+    [ Html.a [ class "ref", anim, style_, href post.url ] [ text post.domain ]
     , Html.a [ class "storyLink", anim, style_, href (sanitizeUrl post), title post.title ] [ text post.title ]
     , Html.a [ class "commentsLink", anim, style_, href post.permalink ] [ text "comments" ]
     ]
