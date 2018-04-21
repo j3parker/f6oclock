@@ -8,7 +8,7 @@ import Http
 import Mouse
 import PageVisibility exposing (..)
 import Reddit exposing (Post, fetchPosts)
-import SanitizePost exposing (sanitizePost)
+import SanitizeUrl exposing (sanitizeUrl)
 import Time exposing (Time, second)
 
 
@@ -159,7 +159,7 @@ renderPost post =
             style [ ( "backgroundColor", toCss color ) ]
     in
     [ Html.span [ class "ref", anim, style_, href post.url ] [ text post.domain ]
-    , Html.a [ class "storyLink", anim, style_, href sanitizeUrl post.url, title post.title ] [ text post.title ]
+    , Html.a [ class "storyLink", anim, style_, href (sanitizeUrl post), title post.title ] [ text post.title ]
     , Html.a [ class "commentsLink", anim, style_, href post.permalink ] [ text "comments" ]
     ]
 

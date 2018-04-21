@@ -1,14 +1,14 @@
-module SanitizePost exposing (sanitizePost)
+module SanitizeUrl exposing (sanitizeUrl)
 
 import Reddit exposing (Post)
 
 
-sanitizePost : Post -> Post
-sanitizePost post =
+sanitizeUrl : Post -> String
+sanitizeUrl post =
     if post.domain |> whitelist then
-        post
+        post.url
     else
-        { post | url = outline post.url }
+        outline post.url
 
 whiteList : List String
 whiteList =
