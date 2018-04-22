@@ -1,3 +1,4 @@
 *.swp
 *.swo
 elm-stuff/
+src/main.js
