@@ -6,10 +6,10 @@ import Mouse
 import Navigation exposing (Location)
 import PageVisibility exposing (Visibility(..), visibilityChanges)
 import Reddit exposing (Post, fetchPosts)
+import Render
 import Route exposing (Route)
 import Time exposing (Time, second)
 import Tuple
-import View
 
 
 type alias Model =
@@ -33,7 +33,7 @@ main =
         { init = init
         , subscriptions = subscriptions
         , update = update
-        , view = \model -> View.view model.route model.posts
+        , view = \model -> Render.render model.route model.posts
         }
 
 

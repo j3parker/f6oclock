@@ -1,20 +1,19 @@
-module View exposing (view)
+module Render exposing (render)
 
 import Colour exposing (Lab, Rgb, labLerp, toCss)
 import Html exposing (Html, text)
 import Html.Attributes exposing (class, href, style, title)
 import Html.Keyed
-import Model exposing (Model)
 import Reddit exposing (Post)
-import Route
+import Route exposing (Route)
 import SanitizeUrl exposing (sanitizeUrl)
 
 
-view : Route -> List Post -> Html msg
-view route posts =
+render : Route -> List Post -> Html msg
+render route posts =
     let
         ( intensityAttrib, low, high ) =
-            case model.route of
+            case route of
                 Route.Index ->
                     ( "backgroundColor", Lab 100 0 0, Lab 57 63.5 46 )
 
@@ -25,7 +24,7 @@ view route posts =
             renderPost intensityAttrib (intensity low high) |> renderKeyedPost
 
         listing =
-            List.concatMap render model.posts
+            List.concatMap render posts
                 |> Html.Keyed.node "div" [ class "listing" ]
 
         srcLink =
