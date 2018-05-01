@@ -1,19 +1,14 @@
-module Model exposing (LoopState(..), Model)
+module Model exposing (Model)
 
+import Loop
 import PageVisibility exposing (Visibility)
 import Reddit exposing (Post)
 import Route exposing (Route)
 
 
-type LoopState
-    = Ready Int -- countdown until Reddit refresh
-    | Choked -- because mouse moved
-    | Waiting -- indicates we are waiting on a response from Reddit
-
-
 type alias Model =
     { visibility : Visibility
-    , loop : LoopState
+    , loop : Loop.State
     , posts : List Post
     , route : Route
     }

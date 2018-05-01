@@ -1,13 +1,15 @@
 module Main exposing (..)
 
 import Http
-import Model exposing (LoopState(..), Model)
+import Loop
+import Model exposing (Model)
 import Mouse
 import Navigation exposing (Location)
 import PageVisibility exposing (Visibility(..), visibilityChanges)
 import Reddit exposing (Post, fetchPosts)
 import Route exposing (Route)
 import Time exposing (Time, second)
+import Tuple
 import View
 
 
@@ -33,11 +35,8 @@ init location =
     let
         route =
             Route.fromLocation location
-
-        loopInit =
-            Ready 1
     in
-    ( Model Visible loopInit [] route, Cmd.none )
+    ( Model Visible Loop.init [] route, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -48,12 +47,12 @@ subscriptions model =
 modelSubscriptions : Model -> List (Sub Msg)
 modelSubscriptions model =
     case ( model.visibility, model.loop ) of
-        ( Visible, Ready _ ) ->
+        ( Visible, Loop.Ready _ ) ->
             [ Time.every second Tick
             , Mouse.moves MouseMove
             ]
 
-        ( Visible, Choked ) ->
+        ( Visible, Loop.Choked ) ->
             -- don't listen to mouse events when choked
             [ Time.every second Tick ]
 
@@ -63,50 +62,46 @@ modelSubscriptions model =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        trigger =
+            fetchPosts "politics" "rising" FetchResult
+
+        updateLoop msg =
+            Loop.update msg model.loop trigger
+
+        updateModel =
+            Tuple.mapFirst (\ls -> { model | loop = ls })
+    in
     case msg of
         Tick _ ->
-            case model.loop of
-                Ready 1 ->
-                    -- refresh
-                    ( { model | loop = Waiting }, fetchPosts "politics" "rising" FetchResult )
-
-                Ready t ->
-                    -- count down
-                    ( { model | loop = Ready (t - 1) }, Cmd.none )
-
-                Choked ->
-                    ( { model | loop = reset }, Cmd.none )
-
-                Waiting ->
-                    ( model, Cmd.none )
+            updateLoop Loop.Tick |> updateModel
 
         MouseMove _ ->
             -- prevent links moving underneath the cursor by not refreshing
-            ( { model | loop = Choked }, Cmd.none )
+            updateLoop Loop.Choke |> updateModel
 
         FetchResult (Ok posts) ->
             let
                 sortedPosts =
                     List.sortBy .upvotes posts |> List.reverse
+
+                newLoop =
+                    updateLoop Loop.Reset
+
+                updateModel ls =
+                    { model | loop = ls, posts = sortedPosts }
             in
-            ( { model | loop = reset, posts = sortedPosts }, Cmd.none )
+            Tuple.mapFirst updateModel newLoop
 
         FetchResult (Err _) ->
-            -- On error, set a longer countdown to "cool down"
-            -- NOTE: visibility changes will clear this
-            ( { model | loop = Ready 30 }, Cmd.none )
+            updateLoop Loop.Fault |> updateModel
 
         VisibilityChange Visible ->
             -- immediately refresh when we become visible
-            ( { model | visibility = Visible, loop = Ready 1 }, Cmd.none )
+            ( { model | visibility = Visible, loop = Loop.init }, Cmd.none )
 
         VisibilityChange Hidden ->
             ( { model | visibility = Hidden }, Cmd.none )
 
         RouteChange route ->
             ( { model | route = route }, Cmd.none )
-
-
-reset : LoopState
-reset =
-    Ready 4
