@@ -10,8 +10,8 @@ import Route
 import SanitizeUrl exposing (sanitizeUrl)
 
 
-view : Model -> Html msg
-view model =
+view : Route -> List Post -> Html msg
+view route posts =
     let
         ( intensityAttrib, low, high ) =
             case model.route of

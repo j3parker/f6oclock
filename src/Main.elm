@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Http
 import Loop
-import Model exposing (Model)
 import Mouse
 import Navigation exposing (Location)
 import PageVisibility exposing (Visibility(..), visibilityChanges)
@@ -11,6 +10,14 @@ import Route exposing (Route)
 import Time exposing (Time, second)
 import Tuple
 import View
+
+
+type alias Model =
+    { visibility : Visibility
+    , loop : Loop.State
+    , posts : List Post
+    , route : Route
+    }
 
 
 type Msg
@@ -26,7 +33,7 @@ main =
         { init = init
         , subscriptions = subscriptions
         , update = update
-        , view = View.view
+        , view = \model -> View.view model.route model.posts
         }
 
 
