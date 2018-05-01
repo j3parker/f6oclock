@@ -48,6 +48,11 @@ a.srcLink {
   text-decoration: none;
 }
 
+a:hover {
+  color: black !important;
+  transition: color 0s linear;
+}
+
 .smooth  {
-  transition: all 4s ease;
+  transition: color 0.75s ease, background-color 4s ease;
 }
