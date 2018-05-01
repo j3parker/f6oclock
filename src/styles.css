@@ -48,4 +48,6 @@ a.srcLink {
   text-decoration: none;
 }
 
-.smoothBg  { transition: background-color 4s ease; }
+.smooth  {
+  transition: all 4s ease;
+}

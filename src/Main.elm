@@ -1,28 +1,14 @@
 module Main exposing (..)
 
-import Colour exposing (Lab, Rgb, labLerp, toCss)
-import Html exposing (Html, text)
-import Html.Attributes exposing (class, href, style, title)
-import Html.Keyed
 import Http
+import Model exposing (LoopState(..), Model)
 import Mouse
-import PageVisibility exposing (..)
+import Navigation exposing (Location)
+import PageVisibility exposing (Visibility(..), visibilityChanges)
 import Reddit exposing (Post, fetchPosts)
-import SanitizeUrl exposing (sanitizeUrl)
+import Route exposing (Route)
 import Time exposing (Time, second)
-
-
-type LoopState
-    = Ready Int -- countdown until Reddit refresh
-    | Choked -- because mouse moved
-    | Waiting -- indicates we are waiting on a response from Reddit
-
-
-type alias Model =
-    { visibility : Visibility
-    , loop : LoopState
-    , posts : List Post
-    }
+import View
 
 
 type Msg
@@ -30,20 +16,28 @@ type Msg
     | MouseMove Mouse.Position
     | FetchResult (Result Http.Error (List Post))
     | VisibilityChange Visibility
+    | RouteChange Route
 
 
 main =
-    Html.program
+    Navigation.program (Route.fromLocation >> RouteChange)
         { init = init
         , subscriptions = subscriptions
         , update = update
-        , view = view
+        , view = View.view
         }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model Visible (Ready 1) [], Cmd.none )
+init : Location -> ( Model, Cmd Msg )
+init location =
+    let
+        route =
+            Route.fromLocation location
+
+        loopInit =
+            Ready 1
+    in
+    ( Model Visible loopInit [] route, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -109,61 +103,10 @@ update msg model =
         VisibilityChange Hidden ->
             ( { model | visibility = Hidden }, Cmd.none )
 
+        RouteChange route ->
+            ( { model | route = route }, Cmd.none )
+
 
 reset : LoopState
 reset =
     Ready 4
-
-
-view : Model -> Html Msg
-view model =
-    let
-        listing =
-            List.concatMap renderKeyedPost model.posts |> Html.Keyed.node "div" [ class "listing" ]
-
-        srcLink =
-            Html.a [ href "https://github.com/j3parker/f6oclock", class "srcLink" ] [ text "[src]" ]
-    in
-    Html.div [] [ listing, srcLink ]
-
-
-renderKeyedPost : Post -> List ( String, Html Msg )
-renderKeyedPost post =
-    let
-        keys =
-            getPostElemKeys post
-
-        elems =
-            renderPost post
-    in
-    List.map2 (,) keys elems
-
-
-getPostElemKeys : Post -> List String
-getPostElemKeys post =
-    List.map
-        (\n -> post.id ++ "-" ++ toString n)
-        (List.range 1 3)
-
-
-renderPost : Post -> List (Html Msg)
-renderPost post =
-    let
-        anim =
-            class "smoothBg"
-
-        color =
-            intensity post.upvotes
-
-        style_ =
-            style [ ( "backgroundColor", toCss color ) ]
-    in
-    [ Html.a [ class "ref", anim, style_, href post.url ] [ text post.domain ]
-    , Html.a [ class "storyLink", anim, style_, href (sanitizeUrl post), title post.title ] [ text post.title ]
-    , Html.a [ class "commentsLink", anim, style_, href post.permalink ] [ text "comments" ]
-    ]
-
-
-intensity : Int -> Rgb
-intensity =
-    labLerp (Lab 100 0 0) (Lab 57 63.5 46) 20 700
