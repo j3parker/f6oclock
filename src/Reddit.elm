@@ -2,6 +2,7 @@ module Reddit exposing (Post, fetchPosts)
 
 import Http
 import Json.Decode exposing (..)
+import Regex exposing (HowMany(..), regex, replace)
 
 
 type alias Post =
@@ -41,9 +42,14 @@ decodePostData : Decoder Post
 decodePostData =
     map7 Post
         (field "id" string)
-        (field "title" string)
+        (map (\t -> htmlDecode t) (field "title" string))
         (field "domain" string)
         (map (\rel -> "https://www.reddit.com" ++ rel) (field "permalink" string))
         (field "url" string)
         (field "ups" int)
         (field "created_utc" int)
+
+
+htmlDecode : String -> String
+htmlDecode =
+    replace All (regex "&amp;") (\_ -> "&")
