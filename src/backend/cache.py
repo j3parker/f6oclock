@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from google.cloud import storage
+import gzip
 import math
 import re
 import requests
@@ -139,10 +140,16 @@ def sign(x):
 def set_cache(bucket, res):
     blob = storage.Blob('_cache/r/politics/rising.json', bucket)
     blob.cache_control = 'public, max-age=' + str(REFRESH_MIN)
+    blob.content_encoding = 'gzip'
+
+    data = bytes(res.text, 'utf-8')
+    compressed = gzip.compress(data)
+
     blob.upload_from_string(
-        res.text,
+        data = compressed,
         content_type = 'application/json',
     )
+
     print('cached')
 
 ###############################################################################
