@@ -18,14 +18,14 @@ import time
 ###############################################################################
 
 # We refresh somewhere between every REFRESH_MIN seconds and REFRESH_MAX
-# seconds depending on how much is happening between refreshes. REFRESH_AGGRO
+# seconds depending on how much is happening between refreshes. REFRESH_BASE
 # controls how fast it (exponentially) moves between the min and max.
 REFRESH_MIN = 30 # 30 seconds
 REFRESH_MAX = 3600 # 1 hour
 REFRESH_BASE = 2 # base for exponential increase/decay of refresh rate
 REFRESH_UP = 1.5 # speed at which exponent moves when uping the refresh rate
 REFRESH_DOWN = 1
-STREAK_MAX = math.ceil(math.log(REFRESH_MAX, REFRESH_AGGRO))
+STREAK_MAX = math.ceil(math.log(REFRESH_MAX - REFRESH_MIN + 1, REFRESH_AGGRO))
 
 # These numbers control how much weight is given to changes in score when
 # computing the diff for two scoreboards. These values are chosen to match the
@@ -70,11 +70,10 @@ def get_scoreboard_entry(post):
     data = post['data']
     return (data['id'], data['ups'])
 
-# Exponental back off from REFRESH_MIN to REFRESH_MAX modulated by diff_score.
-# If diff_score is consistently 0 this is straight-forward exp. backoff.
-# Higher diff_scores slow down the backoff.
+# Exponentially move between REFRESH_MIN/REFRESH_MAX depending on recent
+# history of refresh productivity
 def get_next_refresh(streak):
-    refresh = REFRESH_MIN - sign(streak)*REFRESH_BASE**abs(streak)
+    refresh = REFRESH_MIN + REFRESH_BASE**abs(streak) - 1
     return clamp(REFRESH_MIN, REFRESH_MAX, refresh)
 
 # Compute a delta between two scoreboards. This is intended to be a qualitative
@@ -188,13 +187,13 @@ while True:
     # and we also don't update prev (that way we are always diffing against
     # what was cached (unless this is on boot)
     if delta > DELTA_CUTOFF:
-        streak += REFRESH_UP
+        streak -= REFRESH_UP
         set_cache(bucket, res)
         prev = cur
     else:
-        streak -= REFRESH_DOWN
+        streak += REFRESH_DOWN
 
-    streak = clamp(-STREAK_MAX, STREAK_MAX, streak)
+    streak = clamp(0, STREAK_MAX, streak)
 
     next_refresh = get_next_refresh(streak)
     print('streak = ' + str(streak))
