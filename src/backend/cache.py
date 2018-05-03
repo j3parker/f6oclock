@@ -61,7 +61,6 @@ def get_scoreboard(res):
     sorted_posts = sorted([get_scoreboard_entry(post) for post in posts], key = lambda post: post[1])
 
     return {
-        # dict from post id to score
         "ids": [post[0] for post in sorted_posts],
         "votes": [post[1] for post in sorted_posts]
     }
