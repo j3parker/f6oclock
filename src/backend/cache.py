@@ -22,7 +22,9 @@ import time
 # controls how fast it (exponentially) moves between the min and max.
 REFRESH_MIN = 30 # 30 seconds
 REFRESH_MAX = 3600 # 1 hour
-REFRESH_AGGRO = 2
+REFRESH_BASE = 2 # base for exponential increase/decay of refresh rate
+REFRESH_UP = 1.5 # speed at which exponent moves when uping the refresh rate
+REFRESH_DOWN = 1
 STREAK_MAX = math.ceil(math.log(REFRESH_MAX, REFRESH_AGGRO))
 
 # These numbers control how much weight is given to changes in score when
@@ -72,7 +74,7 @@ def get_scoreboard_entry(post):
 # If diff_score is consistently 0 this is straight-forward exp. backoff.
 # Higher diff_scores slow down the backoff.
 def get_next_refresh(streak):
-    refresh = REFRESH_MIN - sign(streak)*REFRESH_AGGRO**abs(streak)
+    refresh = REFRESH_MIN - sign(streak)*REFRESH_BASE**abs(streak)
     return clamp(REFRESH_MIN, REFRESH_MAX, refresh)
 
 # Compute a delta between two scoreboards. This is intended to be a qualitative
@@ -186,11 +188,11 @@ while True:
     # and we also don't update prev (that way we are always diffing against
     # what was cached (unless this is on boot)
     if delta > DELTA_CUTOFF:
-        streak += 1
+        streak += REFRESH_UP
         set_cache(bucket, res)
         prev = cur
     else:
-        streak -= 1
+        streak -= REFRESH_DOWN
 
     streak = clamp(-STREAK_MAX, STREAK_MAX, streak)
 
