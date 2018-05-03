@@ -25,7 +25,7 @@ REFRESH_MAX = 3600 # 1 hour
 REFRESH_BASE = 2 # base for exponential increase/decay of refresh rate
 REFRESH_UP = 1.5 # speed at which exponent moves when uping the refresh rate
 REFRESH_DOWN = 1
-STREAK_MAX = math.ceil(math.log(REFRESH_MAX - REFRESH_MIN + 1, REFRESH_AGGRO))
+STREAK_MAX = math.ceil(math.log(REFRESH_MAX - REFRESH_MIN + 1, REFRESH_BASE))
 
 # These numbers control how much weight is given to changes in score when
 # computing the diff for two scoreboards. These values are chosen to match the
