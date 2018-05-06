@@ -63,6 +63,9 @@ modelSubscriptions model =
             -- don't listen to mouse events when choked
             [ Time.every second Tick ]
 
+        ( Hidden, _ ) ->
+            [ Time.every (10 * second) Tick ]
+
         _ ->
             []
 
