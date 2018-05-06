@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from google.cloud import storage
 import gzip
+import html
+import json
 import math
 import re
 import requests
@@ -52,17 +54,20 @@ def fetch_data():
         headers = headers
     )
 
-    return res
+    return sorted(
+        res.json()['data']['children'],
+        key = lambda post: post['data']['ups'],
+        reverse = True
+    )
 
 # Extracts the ids and vote numbers for the posts. This minus the links and
 # titles is what is shown on f6oclock
-def get_scoreboard(res):
-    posts = res.json()['data']['children']
-    sorted_posts = sorted([get_scoreboard_entry(post) for post in posts], key = lambda post: post[1])
+def get_scoreboard(posts):
+    entries = [get_scoreboard_entry(post) for post in posts]
 
     return {
-        "ids": [post[0] for post in sorted_posts],
-        "votes": [post[1] for post in sorted_posts]
+        "ids": [post[0] for post in entries],
+        "votes": [post[1] for post in entries]
     }
 
 def get_scoreboard_entry(post):
@@ -138,8 +143,11 @@ def sign(x):
 
 # Store the raw reddit response into GCS
 def set_cache(bucket, res):
-    blob = storage.Blob('_cache/r/politics/rising.json', bucket)
+    blob = storage.Blob('index.html', bucket)
+
+    # TODO between REFRESH_MIN and something else cache lifetime?
     blob.cache_control = 'public, max-age=' + str(REFRESH_MIN)
+
     blob.content_encoding = 'gzip'
 
     data = bytes(res.text, 'utf-8')
@@ -151,6 +159,33 @@ def set_cache(bucket, res):
     )
 
     print('cached')
+
+def render(posts):
+    with open('../index.html', 'r') as f:
+        template = f.read()
+
+    # This knows about the Elm type Post
+    posts = [{
+        'id': post['data']['id'],
+        'upvotes': post['data']['ups'],
+        'createdUtc': post['data']['created_utc'],
+        'domain': post['data']['domain'],
+        'url': post['data']['url'],
+
+        # TODO: if elm did unescape @ render wouldn't need to do it here.
+        'title': html.unescape(post['data']['title']),
+
+        # TODO: elm should do this at render time
+        'permalink': 'https://www.reddit.com' + post['data']['permalink'],
+
+    } for post in posts]
+
+    data = json.dumps(posts, separators=(',', ':'))
+
+    return template.replace(
+        'const cache = { posts: [] };',
+        'const cache={posts:'+ data + '};'
+    )
 
 ###############################################################################
 ###############################################################################
@@ -176,9 +211,9 @@ streak = -1
 while True:
     time.sleep(next_refresh)
 
-    res = fetch_data()
+    posts = fetch_data()
 
-    cur = get_scoreboard(res)
+    cur = get_scoreboard(posts)
 
     delta = compute_delta(prev, cur)
 
@@ -187,6 +222,7 @@ while True:
     # what was cached (unless this is on boot)
     if delta > DELTA_CUTOFF:
         streak -= REFRESH_UP
+        res = render(posts)
         set_cache(bucket, res)
         prev = cur
     else:
