@@ -155,7 +155,7 @@ def set_cache(bucket, res):
 
     blob.upload_from_string(
         data = compressed,
-        content_type = 'application/json',
+        content_type = 'text/html',
     )
 
     print('cached')
