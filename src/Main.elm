@@ -28,8 +28,13 @@ type Msg
     | RouteChange Route
 
 
+type alias Flags =
+    { posts : List Post
+    }
+
+
 main =
-    Navigation.program (Route.fromLocation >> RouteChange)
+    Navigation.programWithFlags (Route.fromLocation >> RouteChange)
         { init = init
         , subscriptions = subscriptions
         , update = update
@@ -37,13 +42,13 @@ main =
         }
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : Flags -> Location -> ( Model, Cmd Msg )
+init flags location =
     let
         route =
             Route.fromLocation location
     in
-    ( Model Visible Loop.init [] route, Cmd.none )
+    ( Model Visible Loop.init flags.posts route, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
