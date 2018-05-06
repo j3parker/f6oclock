@@ -150,7 +150,7 @@ def set_cache(bucket, res):
 
     blob.content_encoding = 'gzip'
 
-    data = bytes(res.text, 'utf-8')
+    data = bytes(res, 'utf-8')
     compressed = gzip.compress(data)
 
     blob.upload_from_string(
