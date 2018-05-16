@@ -2,3 +2,4 @@
 *.swo
 elm-stuff/
 src/main.js
+src/main.min.js
