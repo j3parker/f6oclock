@@ -26,7 +26,7 @@ div.listing > * {
 }
 
 a.ref {
-  font-family: 'concourse-c3', sans;
+  font-family: 'concourse-c3', sans-serif;
   text-align: right;
   text-decoration: none;
   color: #777;
@@ -34,7 +34,7 @@ a.ref {
 }
 
 a.storyLink {
-  font-family: 'concourse-t4', sans;
+  font-family: 'concourse-t4', sans-serif;
   text-decoration: none;
   color: black;
   font-size: 125%;
@@ -46,7 +46,7 @@ a.storyLink {
 }
 
 a.commentsLink {
-  font-family: 'concourse-c3', sans;
+  font-family: 'concourse-c3', sans-serif;
   text-decoration: none;
   color: #777;
   padding-left: 10px;
