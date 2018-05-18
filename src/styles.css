@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'concourse-t4';
+    src: url('/fonts/concourse-t4-regular.woff2') format('woff2'),
+         url('/fonts/concourse-t4-regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'concourse-c3';
+    src: url('/fonts/concourse-c3-regular.woff2') format('woff2'),
+         url('/fonts/concourse-c3-regular.woff') format('woff');
+}
+
 body {
   margin: 0;
   width: 100%;
@@ -9,20 +21,20 @@ div.listing {
 }
 
 div.listing > * {
-  padding-top: 0.4em;
-  padding-bottom: 0.4em;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 a.ref {
+  font-family: 'concourse-c3', sans;
   text-align: right;
   text-decoration: none;
-  font-style: italic;
   color: #777;
-  padding-right: 0.5em;
+  padding-right: 10px;
 }
 
 a.storyLink {
-  font-family: sans-serif;
+  font-family: 'concourse-t4', sans;
   text-decoration: none;
   color: black;
   font-size: 125%;
@@ -34,15 +46,16 @@ a.storyLink {
 }
 
 a.commentsLink {
+  font-family: 'concourse-c3', sans;
   text-decoration: none;
   color: #777;
-  padding-left: 0.5em;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 a.srcLink {
   text-align: center;
   display: block;
-  padding-top: 2em;
   font-family: monospace;
   color: black;
   text-decoration: none;
@@ -64,8 +77,16 @@ a:hover {
 
   div.listing > * {
     text-align: left;
-    padding: 5px 0 5px 10px;
+    padding: 0 10px 0 10px;
     white-space: pre-wrap;
     display: block;
+  }
+
+  a.ref {
+    padding: 10px 10px 0 10px;
+  }
+
+  a.commentsLink {
+    padding: 0 10px 10px 10px;
   }
 }
