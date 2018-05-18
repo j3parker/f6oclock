@@ -56,3 +56,16 @@ a:hover {
 .smooth  {
   transition: color 0.75s ease, background-color 4s ease;
 }
+
+@media only screen and (min-device-width: 400px) and (orientation: portrait) {
+  div.listing {
+    display: block;
+  }
+
+  div.listing > * {
+    text-align: left;
+    padding: 5px 0 5px 10px;
+    white-space: pre-wrap;
+    display: block;
+  }
+}
