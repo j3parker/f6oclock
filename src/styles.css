@@ -29,7 +29,7 @@ a.ref {
   font-family: 'concourse-c3', sans-serif;
   text-align: right;
   text-decoration: none;
-  color: #777;
+  color: black;
   padding-right: 10px;
 }
 
@@ -48,7 +48,7 @@ a.storyLink {
 a.commentsLink {
   font-family: 'concourse-c3', sans-serif;
   text-decoration: none;
-  color: #777;
+  color: black;
   padding-left: 10px;
   padding-right: 10px;
 }
