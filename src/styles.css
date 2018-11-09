@@ -70,7 +70,7 @@ a:hover {
   transition: color 0.75s ease, background-color 4s ease;
 }
 
-@media only screen and (min-device-width: 400px) and (orientation: portrait) {
+@media only screen and (orientation: portrait) {
   div.listing {
     display: block;
   }
