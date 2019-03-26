@@ -12,7 +12,7 @@ sanitizeUrl post =
 
 whiteList : List String
 whiteList =
-    [ "self.politics", "reddit.com", "outline.com", "nytimes.com" ]
+    [ "self.politics", "reddit.com", "outline.com", "nytimes.com", "www.nytimes.com" ]
 
 whitelist : String -> Bool
 whitelist domain =
